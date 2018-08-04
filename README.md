@@ -97,6 +97,7 @@ export class CameraService {
 }  
 ```
 
+[Using Cordova Plugins in Ionic 2 with Ionic Native](https://www.joshmorony.com/using-cordova-plugins-in-ionic-2-with-ionic-native/)
 
 
 ### Libraries used
