@@ -21,7 +21,6 @@ public class CropPlugin extends CordovaPlugin {
     private CallbackContext callbackContext;
     private Uri inputUri;
     private Uri outputUri;
-    private int requestMode = BuildConfig.RequestMode;
 
     @Override
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
