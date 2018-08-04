@@ -6,7 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -39,16 +40,26 @@ public class CropPlugin extends CordovaPlugin {
           this.callbackContext = callbackContext;
 
           cordova.setActivityResultCallback(this);
-          Crop crop = Crop.of(this.inputUri, this.outputUri);
-          if(targetHeight != -1 && targetWidth != -1) {
-              crop.withMaxSize(targetWidth, targetHeight);
-              if(targetWidth == targetHeight) {
-                  crop.asSquare();
-              }
-          } else {
-              crop.asSquare();
-          }
-          crop.start(cordova.getActivity());
+          
+          CropImage.activity(this.inputUri)
+          .setGuidelines(CropImageView.Guidelines.ON)
+          .setActivityTitle("My Crop")
+          .setCropShape(CropImageView.CropShape.OVAL)
+          .setCropMenuCropButtonTitle("Done")
+          .setRequestedSize(400, 400)
+          .setCropMenuCropButtonIcon(R.drawable.ic_launcher)
+          .start(cordova.getActivity());
+
+        //   Crop crop = Crop.of(this.inputUri, this.outputUri);
+        //   if(targetHeight != -1 && targetWidth != -1) {
+        //       crop.withMaxSize(targetWidth, targetHeight);
+        //       if(targetWidth == targetHeight) {
+        //           crop.asSquare();
+        //       }
+        //   } else {
+        //       crop.asSquare();
+        //   }
+        //   crop.start(cordova.getActivity());
           return true;
       }
       return false;
@@ -56,12 +67,15 @@ public class CropPlugin extends CordovaPlugin {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == Crop.REQUEST_CROP) {
+
+        // handle result of CropImageActivity
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(intent);
             if (resultCode == Activity.RESULT_OK) {
-                Uri imageUri = Crop.getOutput(intent);
+                Uri imageUri = result.getUri();
                 this.callbackContext.success("file://" + imageUri.getPath() + "?" + System.currentTimeMillis());
                 this.callbackContext = null;
-            } else if (resultCode == Crop.RESULT_ERROR) {
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 try {
                     JSONObject err = new JSONObject();
                     err.put("message", "Error on cropping");
@@ -71,18 +85,9 @@ public class CropPlugin extends CordovaPlugin {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                try {
-                    JSONObject err = new JSONObject();
-                    err.put("message", "User cancelled");
-                    err.put("code", "userCancelled");
-                    this.callbackContext.error(err);
-                    this.callbackContext = null;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
         }
+
         super.onActivityResult(requestCode, resultCode, intent);
     }
 

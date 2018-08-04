@@ -55,14 +55,16 @@
       </feature>
     </config-file>
 
-    <framework src="com.soundcloud.android:android-crop:1.0.0@aar" />
+    <framework src="com.theartofdev.edmodo:android-image-cropper:2.7.+" />
 
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
-      <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+      <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+  android:theme="@style/Base.Theme.AppCompat"/>
     </config-file>
 
     <config-file target="AndroidManifest.xml" parent="/manifest">
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     </config-file>
 
     <source-file src="src/android/CropPlugin.java" target-dir="src/com/jeduan/crop" />
