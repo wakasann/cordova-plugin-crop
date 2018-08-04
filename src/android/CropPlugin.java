@@ -6,8 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
+import com.yalantis.ucrop.UCrop;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -22,6 +21,7 @@ public class CropPlugin extends CordovaPlugin {
     private CallbackContext callbackContext;
     private Uri inputUri;
     private Uri outputUri;
+    private int requestMode = BuildConfig.RequestMode;
 
     @Override
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -40,11 +40,11 @@ public class CropPlugin extends CordovaPlugin {
           this.callbackContext = callbackContext;
 
           cordova.setActivityResultCallback(this);
-          
-          CropImage.activity(this.inputUri)
-          .setGuidelines(CropImageView.Guidelines.ON)
-          .start(cordova.getActivity());
-
+        
+          UCrop uCrop = UCrop.of(this.inputUri,this.outputUri );
+            uCrop.withAspectRatio(16, 9)
+            .withMaxResultSize(500, 600)
+            .start(cordova.getActivity());
         //   Crop crop = Crop.of(this.inputUri, this.outputUri);
         //   if(targetHeight != -1 && targetWidth != -1) {
         //       crop.withMaxSize(targetWidth, targetHeight);
@@ -63,23 +63,19 @@ public class CropPlugin extends CordovaPlugin {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        // handle result of CropImageActivity
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(intent);
-            if (resultCode == Activity.RESULT_OK) {
-                Uri imageUri = result.getUri();
-                this.callbackContext.success("file://" + imageUri.getPath() + "?" + System.currentTimeMillis());
+        if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            Uri imageUri = UCrop.getOutput(intent);
+            this.callbackContext.success("file://" + imageUri.getPath() + "?" + System.currentTimeMillis());
+            this.callbackContext = null;
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            try {
+                JSONObject err = new JSONObject();
+                err.put("message", "Error on cropping");
+                err.put("code", String.valueOf(resultCode));
+                this.callbackContext.error(err);
                 this.callbackContext = null;
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                try {
-                    JSONObject err = new JSONObject();
-                    err.put("message", "Error on cropping");
-                    err.put("code", String.valueOf(resultCode));
-                    this.callbackContext.error(err);
-                    this.callbackContext = null;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
