@@ -43,11 +43,6 @@ public class CropPlugin extends CordovaPlugin {
           
           CropImage.activity(this.inputUri)
           .setGuidelines(CropImageView.Guidelines.ON)
-          .setActivityTitle("My Crop")
-          .setCropShape(CropImageView.CropShape.OVAL)
-          .setCropMenuCropButtonTitle("Done")
-          .setRequestedSize(400, 400)
-          .setCropMenuCropButtonIcon(R.drawable.ic_launcher)
           .start(cordova.getActivity());
 
         //   Crop crop = Crop.of(this.inputUri, this.outputUri);
