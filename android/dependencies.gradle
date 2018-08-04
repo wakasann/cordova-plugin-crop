@@ -1,0 +1,4 @@
+dependencies {
+    // logback
+    compile 'com.github.yalantis:ucrop:2.2.2'
+}

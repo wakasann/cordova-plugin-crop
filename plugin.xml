@@ -55,7 +55,7 @@
       </feature>
     </config-file>
 
-    <framework src="com.github.yalantis:ucrop:2.2.2" />
+    <framework src="android/dependencies.gradle" custom="true" type="gradleReference"/>
 
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
       <activity
