@@ -1,5 +1,5 @@
 /* global cordova */
-var crop2 = module.exports = function cropImage (success, fail, image, options) {
+var crop = module.exports = function cropImage (success, fail, image, options) {
   options = options || {}
   options.quality = options.quality || 100
   options.targetWidth = options.targetWidth || -1
@@ -9,6 +9,6 @@ var crop2 = module.exports = function cropImage (success, fail, image, options) 
 
 module.exports.promise = function cropAsync (image, options) {
   return new Promise(function (resolve, reject) {
-    crop2(resolve, reject, image, options)
+    crop(resolve, reject, image, options)
   })
 }
