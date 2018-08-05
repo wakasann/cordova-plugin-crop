@@ -1,11 +1,29 @@
-allprojects {
-   repositories {
-      jcenter()
-      maven { url "https://jitpack.io" }
-   }
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+        maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    // logback
     compile 'com.github.yalantis:ucrop:2.2.2'
+}
+
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '25.3.1'
+            }
+        }
+    }
 }

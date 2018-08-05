@@ -100,6 +100,9 @@ export class CameraService {
 [Using Cordova Plugins in Ionic 2 with Ionic Native](https://www.joshmorony.com/using-cordova-plugins-in-ionic-2-with-ionic-native/)
 
 
+android 插件的gradle配置参考 [dependencies.gradle](https://github.com/mauron85/cordova-plugin-background-geolocation/blob/master/android/dependencies.gradle)
+
+[Android Gradle 项目结构简介](https://www.jianshu.com/p/57fb3e888923)
 ### Libraries used
 
  * iOS: [PEPhotoCropEditor](https://github.com/kishikawakatsumi/PEPhotoCropEditor)

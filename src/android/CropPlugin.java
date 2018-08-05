@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -40,10 +41,12 @@ public class CropPlugin extends CordovaPlugin {
 
           cordova.setActivityResultCallback(this);
         
-          UCrop uCrop = UCrop.of(this.inputUri,this.outputUri );
-            uCrop.withAspectRatio(16, 9)
-            .withMaxResultSize(500, 600)
-            .start(cordova.getActivity());
+         cordova.setActivityResultCallback(this);
+          UCrop.of(this.inputUri, this.outputUri)
+                  .withAspectRatio(16, 9)
+                  .withMaxResultSize(800, 2400)
+                  .start(cordova.getActivity());
+
         //   Crop crop = Crop.of(this.inputUri, this.outputUri);
         //   if(targetHeight != -1 && targetWidth != -1) {
         //       crop.withMaxSize(targetWidth, targetHeight);
@@ -62,19 +65,31 @@ public class CropPlugin extends CordovaPlugin {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-            Uri imageUri = UCrop.getOutput(intent);
-            this.callbackContext.success("file://" + imageUri.getPath() + "?" + System.currentTimeMillis());
-            this.callbackContext = null;
-        } else if (resultCode == UCrop.RESULT_ERROR) {
-            try {
-                JSONObject err = new JSONObject();
-                err.put("message", "Error on cropping");
-                err.put("code", String.valueOf(resultCode));
-                this.callbackContext.error(err);
+       if (requestCode == UCrop.REQUEST_CROP) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri imageUri = UCrop.getOutput(intent);
+                this.callbackContext.success("file://" + imageUri.getPath()); // + "?" + System.currentTimeMillis()
                 this.callbackContext = null;
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else if (resultCode == UCrop.RESULT_ERROR) {
+                try {
+                    JSONObject err = new JSONObject();
+                    err.put("message", "Error on cropping");
+                    err.put("code", String.valueOf(resultCode));
+                    this.callbackContext.error(err);
+                    this.callbackContext = null;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                try {
+                    JSONObject err = new JSONObject();
+                    err.put("message", "User cancelled");
+                    err.put("code", "userCancelled");
+                    this.callbackContext.error(err);
+                    this.callbackContext = null;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
